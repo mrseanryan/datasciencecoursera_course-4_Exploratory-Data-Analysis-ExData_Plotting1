@@ -1,6 +1,10 @@
-# Load the data
-data_url <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
-# Only need data from the dates 2007-02-01 and 2007-02-02
+source("utils.download_data.R")
+source("utils.print.R")
+
+data_1 <- load_data_for_given_dates()
+head(data_1)
+
+print_section("Plotting plot 1 - Global Active Power vs Frequency")
 
 # Convert the Date and Time variables to Date/Time classes in R using strptime(), as.Date().
 
