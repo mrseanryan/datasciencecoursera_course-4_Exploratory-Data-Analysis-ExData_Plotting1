@@ -57,7 +57,5 @@ tidy_data <- function(dt1) {
   library(hms)
   dt1$Time <- as_hms(dt1$Time)
 
-  # dt1 <- na.omit(dt1)
-
   invisible(dt1)
 }
