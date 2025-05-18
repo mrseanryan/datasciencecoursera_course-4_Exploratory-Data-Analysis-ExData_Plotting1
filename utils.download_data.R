@@ -1,3 +1,8 @@
+source("utils.install.R")
+
+install_if_missing("data.table")
+install_if_missing("hms")
+
 # Load the data
 data_url <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
 
@@ -20,8 +25,7 @@ download_if_missing <- function(data_dir, data_filename, data_url) {
   return(dest_file)
 }
 
-# We only need data from the dates 2007-02-01 and 2007-02-02
-load_data_for_given_dates <- function() { 
+load_data_for_given_dates <- function(dates = c("1/2/2007", "2/2/2007")) { 
   data_dir <- "./temp"
   data_filename <- "household_power_consumption.zip"
   dest_file <- download_if_missing(data_dir, data_filename, data_url)
@@ -34,12 +38,26 @@ load_data_for_given_dates <- function() {
     unzip(dest_file, exdir = data_dir)
   }
   list.files(data_dir)
+ 
+  # Load data - pre-filter for efficiency.
+  library(data.table)
+  dt1 <- fread(path_to_csv, sep = ";", na.strings = "?")
 
-  data <- read.csv(path_to_csv, sep = ";", header = TRUE, na.strings = "?")
-  # Convert 'Date' column to Date type
-  data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
-  # Subset data for 2007-02-01 and 2007-02-02
-  subset_data <- subset(data, Date == as.Date("2007-02-01") | Date == as.Date("2007-02-02"))
+  # Filter to specific dates
+  dt1 <- dt1[Date %in% dates]
 
-  invisible(subset_data)
+  invisible(dt1)
+}
+
+tidy_data <- function(dt1) { 
+  # Convert the Date and Time variables to Date/Time classes in R using strptime(), as.Date().
+  # - Convert the 'Date' column to a Date type
+  dt1$Date <- as.Date(dt1$Date, format = "%d/%m/%Y")
+  # - Convert Time column - use hms so it does not include the date
+  library(hms)
+  dt1$Time <- as_hms(dt1$Time)
+
+  # dt1 <- na.omit(dt1)
+
+  invisible(dt1)
 }
