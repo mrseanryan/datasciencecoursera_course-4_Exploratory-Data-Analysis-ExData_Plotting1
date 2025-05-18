@@ -2,7 +2,6 @@ source("utils.download_data.R")
 source("utils.plots.R")
 source("utils.print.R")
 
-
 # load_data_for_given_dates() loads the data for the given dates:
 data_1 <- load_data_for_given_dates()
 
